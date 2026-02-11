@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Be My Valentine? </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #ffb6c1, #ffe4e1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.5);
+      padding: 40px;
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+      border: 2px solid white;
+      min-width: 380px;
+      box-shadow: 0 15px 35px rgba(255, 77, 109, 0.2);
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #ff3366;
+      margin-bottom: 10px;
+    }
+
+    .bunny {
+      width: 160px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+    }
+
+    .button-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      margin-top: 20px;
+      height: 60px;
+    }
+
+    button {
+      padding: 15px 40px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    #yes {
+      background: #ff4d6d;
+      color: white;
+      box-shadow: 0 10px 20px rgba(255, 77, 109, 0.4);
+      z-index: 1000;
+      transition: transform 0.1s linear;
+    }
+
+    /* ========= THE NO BUTTON ============*/
+    #no {
+      background: #5d6d7e; 
+      color: white;
+      position: relative;
+      transition: opacity 0.5s ease, background-color 0.2s ease;
+    }
+
+    #no:hover {
+      background: #465666; 
+    }
+
+    .heart {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1100;
+      font-size: 20px;
+      animation: floatUp 0.8s ease-out forwards;
+    }
+
+    @keyframes floatUp {
+      to {
+        opacity: 0;
+        transform: translateY(-100px) scale(1.5) rotate(20deg);
+      }
+    }
+
+    .expand-full {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      font-size: 4rem !important;
+      border-radius: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      z-index: 2000;
+    }
+
+    .celebrate {
+      position: fixed;
+      inset: 0;
+      background: #ff4d6d;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      z-index: 3000;
+      text-align: center;
+    }
+
+    .celebrate.show { display: flex; }
+    .celebrate h2 { font-size: 3.5rem; margin-bottom: 10px; }
+    .celebrate img { width: 250px; margin-top: 20px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="main">
+    <img class="bunny" src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif" alt="Cute Bunny">
+    <h1>Will You Be My Valentine? </h1>
+    
+    <div class="button-wrapper">
+      <button id="yes">YES </button>
+      <button id="no">No </button>
+    </div>
+  </div>
+
+  <div class="celebrate" id="celebrate">
+    <h2>YAYYYYY! 💖</h2>
+    <p>I knew you couldn't say no! 😘</p>
+    <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif" alt="Celebration">
+  </div>
+
+  <script>
+    const yes = document.getElementById("yes");
+    const no = document.getElementById("no");
+    const main = document.getElementById("main");
+    const celebrate = document.getElementById("celebrate");
+
+    let hasBeenHovered = false;
+    let yesScale = 1;
+    let isGrowing = false;
+
+    /* ========= THE NO BUTTON ============*/
+
+    no.addEventListener("mouseenter", () => {
+      if (!hasBeenHovered) {
+        hasBeenHovered = true;
+        no.style.transition = "opacity 0.2s ease"; 
+        no.style.opacity = "0";
+        no.style.pointerEvents = "none";
+
+        setTimeout(() => {
+          no.style.position = "fixed";
+          moveNoRandomly();
+          no.style.transition = "opacity 0.8s ease"; 
+          no.style.opacity = "1";
+          no.style.pointerEvents = "auto";
+          
+          setTimeout(() => {
+            no.style.transition = "left 0.3s ease, top 0.3s ease, opacity 0.3s ease";
+          }, 800);
+        }, 1000);
+      } else {
+        moveNoRandomly();
+      }
+    });
+
+    function moveNoRandomly() {
+      const x = Math.random() * (window.innerWidth - no.offsetWidth - 180) + 30;
+      const y = Math.random() * (window.innerHeight - no.offsetHeight - 180) + 30;
+      no.style.left = x + "px";
+      no.style.top = y + "px";
+    }
+
+    yes.addEventListener("mouseenter", () => { isGrowing = true; });
+    yes.addEventListener("mouseleave", () => { isGrowing = false; });
+
+    setInterval(() => {
+      if (isGrowing) {
+        yesScale += 0.025;
+        yes.style.transform = `scale(${yesScale})`;
+        
+        if (yesScale > 12) {
+          yes.classList.add("expand-full");
+          yes.innerText = "YES! 🥰";
+        }
+      }
+    }, 15);
+
+    /* ================ THE  YES BUTTON EVENT ===========================*/
+    yes.addEventListener("mousemove", (e) => {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = ["💖", "✨", "🌸", "🐰"][Math.floor(Math.random() * 4)];
+      heart.style.left = e.clientX + "px";
+      heart.style.top = e.clientY + "px";
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 800);
+    });
+
+    yes.addEventListener("click", () => {
+      main.style.display = "none";
+      no.style.display = "none";
+      celebrate.classList.add("show");
+      document.body.style.backgroundColor = "#ff4d6d";
+    });
+  </script>
+
+</body>
+</html>
